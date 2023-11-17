@@ -1,7 +1,7 @@
 // AddItemPage.js
 
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import { View, Text, TextInput,  TouchableOpacity } from "react-native";
 import { connect } from 'react-redux';
 import { addItemAction } from "../redux/actions";
 import { db } from "../firebase";
@@ -25,7 +25,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-function AddItemPage({ addItem , prop }) {
+function AddItemPage({props}) {
+
+  const shopingCollectionRef = collection(db, "shopingitemsCollect");
+
 
   const navigation = useNavigation();
   const [item, setItemName] = useState("");
@@ -35,27 +38,40 @@ function AddItemPage({ addItem , prop }) {
 
   const goToShop =()=>{
     console.log("go to shop btn clicked ")
+    navigation.navigate("ShopingList");
   }
 
-  const handleAddItem = () => {
-    console.log("add btn clicked ")
-    navigation.navigate("ShopingList");
-    // Add validation logic if needed before adding the item
-    
-    addItem({
-      Item: item,
-      Price: itemPrice,
-      Quantity: itemQuantity,
-      Category: itemCategory,
-    });
+ 
 
-    setItemName("");
-    setItemPrice("0");
-    setItemQuantity("");
-    setItemCategory("");
+  const handleAddItem = async () => {
+  
+  
+    try {
+      await addDoc(shopingCollectionRef, {
+        Item: item,
+        Price: itemPrice,
+        Quantity: itemQuantity,
+        Category: itemCategory,
+      });
 
-    alert("ITEM ADDED ");
+        // Dispatch Redux action to add the item to the shopping list
+        props.addItem({
+          Item: item,
+          Price: itemPrice,
+          Quantity: itemQuantity,
+          Category: itemCategory,
+        })
+      setItemName("");
+      setItemPrice(0);
+      setItemQuantity(0);
+      setItemCategory("");
+
+      alert("ITEM ADDED ");
+    } catch (error) {
+      console.error("Errod adding items to firebase", error);
+    }
   };
+
 
   return (
     <View style={{ margin: 20 }}>
