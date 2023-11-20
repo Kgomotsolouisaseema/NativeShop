@@ -82,6 +82,7 @@ function AddItemPage({props}) {
         <TextInput
           value={item}
           onChangeText={(text) => setItemName(text)}
+          style={{borderWidth:1 , }}
         />
       </View>
       <View>
@@ -89,6 +90,7 @@ function AddItemPage({props}) {
         <TextInput
           value={itemPrice}
           onChangeText={(text) => setItemPrice(text)}
+          style={{borderWidth:1 , }}
         />
       </View>
       <View>
@@ -96,17 +98,18 @@ function AddItemPage({props}) {
         <TextInput
           value={itemQuantity}
           onChangeText={(text) => setItemQuantity(text)}
+          style={{borderWidth:1 , }}
         />
       </View>
    
   
      
-      <TouchableOpacity title="Add Item" onPress={handleAddItem} style={{borderRadius:"15px" ,with:"20px",height: "40px",justifyContent:"center", alignItems:"center" , backgroundColor: "pink" ,  }}>
+      <TouchableOpacity title="Add Item" onPress={handleAddItem} style={{borderRadius:"15px" ,with:"20px",height: "40px",justifyContent:"center", alignItems:"center" , backgroundColor: "blue" ,  }}>
           <Text style={{textAlign:"center" , fontSize:"15px" ,fontWeight:"bold"}} >ADD ITEMS</Text>
       </TouchableOpacity>
 
       <View >
-      <TouchableOpacity title="Add Item" onPress={goToShop} style={{borderRadius:"15px" ,with:"20px",height: "40px",justifyContent:"center", alignItems:"center" , backgroundColor: "orange" , marginTop:10 }}>
+      <TouchableOpacity title="Add Item" onPress={goToShop} style={{borderRadius:"15px" ,with:"20px",height: "40px",justifyContent:"center", alignItems:"center" , backgroundColor: "blue" , marginTop:10 }}>
           <Text style={{textAlign:"center" , fontSize:"15px" ,fontWeight:"bold"}} >VIEW CART</Text>
       </TouchableOpacity>
       </View>
