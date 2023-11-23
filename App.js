@@ -19,8 +19,8 @@ function App() {
     <Provider store={store} >
        <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        {/* <Stack.Screen name="Home" component={HomePage}  /> */}
-        {/* <Stack.Screen name="AddItem" component={AddItemPage} /> */}
+        <Stack.Screen name="Home" component={HomePage}  />
+        <Stack.Screen name="AddItem" component={AddItemPage} />
        
         <Stack.Screen name="ShopingList" component={ShopingListPage} />
       </Stack.Navigator>

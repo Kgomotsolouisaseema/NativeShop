@@ -23,23 +23,25 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 
+
 const mapDispatchToProps = (dispatch) => {
   return {
     deleteItem: (id) => dispatch(deleteItemAction(id)),
-    updateItem: (id, updatedItem) =>
-      dispatch(updateItemAction(id, updatedItem)),
+    updateItem: (id, updatedItem) =>dispatch(updateItemAction(id, updatedItem)),
   };
 };
 
-function ShoppingListPage({ props }) {
-  const [updatedItem, setUpdatedItem] = useState("");
+function ShoppingListPage({ props , updateItem }) {
+
  
   //TRY TO UPDATE ALL FIELDS
   const [updatedItemName, setUpdatedItemName] = useState("");
   const [updatedItemPrice, setUpdatedItemPrice] = useState("");
   const [updatedItemQuantity, setUpdatedItemQuantity] = useState("");
+
   //state to show visibilty when update icon is clicked
-  const [showInput, setshowInput] = useState(false);
+  // const [showInput, setshowInput] = useState(false);
+  const [showInputMap , setShowInputMap] = useState({});//OPENS UP THE UPDATE FIELDS FOR THE SPECIFIC OBJECT
 
   const [shopingItems, setShopingItems] = useState([]);
 
@@ -58,30 +60,33 @@ function ShoppingListPage({ props }) {
   };
 
   //function to update items
-  const updateItem = async (id) => {
+  const updateItems = async (id , ) => {
     const shopItems = doc(db, "shopingitemsCollect", id);
     try{
 
     await updateDoc(shopItems, {
-       Item: updatedItem 
     //for updating many fields 
-    // Item : updatedItemName,
-    // Price: updatedItemPrice,
-    // Quantity: updatedItemQuantity,
+    Item : updatedItemName,
+    Price: updatedItemPrice,
+    Quantity: updatedItemQuantity,
   });
 
-    console.log("Item updated successfully" , updatedItem)
+    console.log("Item updated successfully" )
     Alert.alert("Name update success")
 
     //dispatch
-    props.updateItem(id, updatedItem);
+    // props.updateItem(id, updatedItem);
     props.updateItem(id,{
     //for updating many fields 
-    // Item : updatedItemName,
-    // Price: updatedItemPrice,
-    // Quantity: updatedItemQuantity,
+    Item : updatedItemName,
+    Price: updatedItemPrice,
+    Quantity: updatedItemQuantity,
     });
     
+    //RESET THE OBJECT
+    setUpdatedItemName ("");
+    setUpdatedItemPrice("");
+    setUpdatedItemQuantity("");
 
     }catch(error){
       console.log("Error updating item" , error)
@@ -122,8 +127,10 @@ function ShoppingListPage({ props }) {
     <View  style={style.container}>
       <Text
         style={{
+          flex:1,
+          padding:20,
           fontSize: 24,
-          marginBottom: 10,
+          marginBottom: 20,
           textAlign: "center",
           margin: 5,
           marginBottom: 20,
@@ -132,33 +139,35 @@ function ShoppingListPage({ props }) {
         Shopping List
       </Text>
       {shopingItems.map((item, index) => (
-        <View key={item.id} style={{ marginBottom: 10, borderWidth: 1 }}>
-          <Text style={{ fontSize: 18 }}>Item Name : {item.Item}</Text>
-          <Text style={{ fontSize: 18 }}>Price: R {item.Price}</Text>
-          <Text style={{ fontSize: 18 }}>Quantity : {item.Quantity}</Text>
-          {/* CONDITIONALLY RENDER THE INOUT FIELDS BASED ON 'SHOWINPUT* STATE*/}
-          {showInput &&(
+        <View key={item.id} style={style.card}>
+          <Text style={{ fontSize: 18, fontSize:18 , marginBottom:5  }}>Item Name : {item.Item}</Text>
+          <Text style={{ fontSize: 18, fontSize:18 , marginBottom:5  }}>Price: R {item.Price}</Text>
+          <Text style={{ fontSize: 18, fontSize:18 , marginBottom:5  }}>Quantity : {item.Quantity}</Text>
+          {/* CONDITIONALLY RENDER THE INPUT FIELDS BASED ON 'SHOWINPUT* STATE
+          THESE INPUT FIELDS
+          */}
+          {showInputMap[item.id] &&(
           <View>
-            <TextInput  style={{borderWidth:1 , }}
-             placeholder="Update item"
-             onChangeText={(text) => setUpdatedItem(text)}
+            <TextInput  
+             style={style.inputField}
+             placeholder="Update name"
+             onChangeText={(text) => setUpdatedItemName(text)}
            />
-           <TextInput  style={{borderWidth:1 , }}
-             placeholder="Update item"
-             onChangeText={(text) => setUpdatedItem(text)}
+           <TextInput  style={style.inputField}
+             placeholder="Update price"
+             onChangeText={(text) => setUpdatedItemPrice(text)}
            />
-           <TextInput  style={{borderWidth:1 , }}
-             placeholder="Update item"
-             onChangeText={(text) => setUpdatedItem(text)}
+           <TextInput  style={style.inputField}
+             placeholder="Update Qty"
+             onChangeText={(text) => setUpdatedItemQuantity(text)}
            />
+           <TouchableOpacity onPress={()=>updateItems(item.id)}  style={style.saveButton}>
+            <Text style={style.buttonText}>SAVE</Text>
+           </TouchableOpacity>
 
           </View>
-             
-           
-           
+ 
           )}
-        
-             
 
           <View
             style={{
@@ -168,20 +177,25 @@ function ShoppingListPage({ props }) {
               justifyContent: "flex-end",
             }}
           >
-            <View>
+            <View style={style.buttonContainer}>
               <TouchableOpacity
                 title="Delete item"
                 onPress={() => deleteItems(item.id)}
               >
                 <AntDesign name="delete" size={34} color="black" />
               </TouchableOpacity>
-            </View>
+          
 
-            <View>
+          
               <TouchableOpacity
                 title="Update Item"
                 // onPress={() => updateItem(item.id)}
-                onPress={()=> setshowInput(!showInput)}
+                // onPress={()=> setshowInput(!showInput)}
+                onPress={()=>setShowInputMap((prevState)=>({ //this onPress identifies the specific shop item chosen and when you click on the update icon , it only opens that icon
+                  ...prevState,
+                  [item.id]: !prevState[item.id],
+                }))}
+
               >
                 <FontAwesome5 name="edit" size={34} color="black" />
               </TouchableOpacity>
@@ -197,11 +211,53 @@ function ShoppingListPage({ props }) {
 
 const style = StyleSheet.create({
   container: {
-    
-    backgroundColor: "white",
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+    padding: 20,
+    // alignItems:"center",
     width: "90%" , 
     margin: 20,
   },
+    inputField:{
+      borderWidth:1,
+      borderColor:"black",
+      borderRadius:5,
+      padding: 8,
+      marginBottom: 10,
+    },
+    saveButton: {
+      backgroundColor: "blue",
+      borderRadius:15,
+      height:40,
+      justifyContent:"center",
+      alignItems:"center",
+      marginTop:10,
+    },
+    buttonText:{
+      textAlign:"center",
+      fontSize:20,
+      fontWeight:"bold",
+      color:"#fff",
+
+    },
+    card: {
+      backgroundColor: "white",
+      borderRadius:10,
+      padding:15,
+      marginBottom:15,
+      elevation: 3 , //for andriod shadow
+      shadowColor: "blue",
+      shadowOffset: {width:2 , height:3}, //define how much shadow we have according to the dimensions of the box
+      shadowOpacity: 0.7,
+      shadowRadius: 5,
+    },
+    buttonContainer:{
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      marginTop: 10,
+
+    }
+
 
 })
 export default connect(null, mapDispatchToProps)(ShoppingListPage);
