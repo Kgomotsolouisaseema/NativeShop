@@ -71,7 +71,7 @@ function AddItemPage(props) {
       setItemCategory("");
 
     } catch (error) {
-      console.error("Errod adding items to firebase", error);
+      console.error("Error adding items to firebase", error);
     }
   };
 

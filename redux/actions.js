@@ -8,7 +8,7 @@ export const addItemAction = (itemData) => {
 export const deleteItemAction = (id) => {
     return {
         type :"DELETE_ITEM",
-        payload : id,
+        payload :id,
     };
 };
 
